@@ -1,4 +1,7 @@
 "use client";
+interface EditorialSpotlightProps {
+  filterByTag?: string;
+}
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
@@ -79,10 +82,16 @@ const MetacriticLogoIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 
-const EditorialSpotlight = () => {
+const EditorialSpotlight = ({ filterByTag }: EditorialSpotlightProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const displayData = filterByTag 
+    ? editorialData.filter(item => item.tag === filterByTag)
+    : editorialData;
+
+  if (displayData.length === 0) return null;
 
   const checkForScrollPosition = useCallback(() => {
     const { current } = scrollContainerRef;
@@ -145,7 +154,7 @@ const EditorialSpotlight = () => {
           ref={scrollContainerRef} 
           className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-2 px-2"
         >
-          {editorialData.map((item, index) => (
+          {displayData.map((item, index) => (
             <div key={index} className="flex-shrink-0 w-[300px] snap-start px-2">
               <a href={item.href} className="block bg-card rounded-lg border border-border overflow-hidden h-full group transition-shadow duration-200 hover:shadow-lg">
                 <div className="relative h-[170px]">
@@ -171,7 +180,7 @@ const EditorialSpotlight = () => {
                   </div>
                 </div>
                 <div className="p-4 flex flex-col flex-grow">
-                  <div className="flex-grow">
+                  <div className="body-main flex-grow">
                       <h3 className="text-base font-bold text-foreground mb-2 leading-tight">{item.title}</h3>
                       <div className="text-xs text-muted-foreground mb-2">{item.author}</div>
                       <p className="text-xs text-muted-foreground line-clamp-3 leading-snug">{item.description}</p>

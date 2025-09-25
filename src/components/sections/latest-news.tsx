@@ -1,6 +1,10 @@
 import Link from 'next/link';
 import React from 'react';
 
+interface LatestNewsProps {
+  filterByTag?: string;
+}
+
 type NewsArticle = {
   title: string;
   author: string;
@@ -109,13 +113,17 @@ const newsArticles: NewsArticle[] = [
   },
 ];
 
-const LatestNews = () => {
+const LatestNews: React.FC<LatestNewsProps> = ({ filterByTag }) => {
+  const filteredArticles = filterByTag 
+    ? newsArticles.filter(article => article.category === filterByTag)
+    : newsArticles;
+
   return (
     <section className="bg-background">
       <div className="container py-8">
         <h2 className="text-2xl font-bold text-foreground mb-6">Latest News</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-x-6 gap-y-10">
-          {newsArticles.map((article) => (
+          {filteredArticles.map((article) => (
             <article key={article.title}>
               <Link href={article.url} className="block font-bold text-sm text-foreground hover:underline mb-2">
                 {article.title}

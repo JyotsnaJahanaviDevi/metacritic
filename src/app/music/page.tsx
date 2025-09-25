@@ -3,6 +3,7 @@ import NewAndNotable from "@/components/sections/new-and-notable";
 import LatestVideos from "@/components/sections/latest-videos";
 import LatestNews from "@/components/sections/latest-news";
 import Footer from "@/components/sections/footer";
+import MusicSection from "@/components/sections/music-section";
 
 export default function MusicPage() {
   return (
@@ -13,12 +14,8 @@ export default function MusicPage() {
           <h1 className="text-3xl font-bold">Music</h1>
         </section>
         <div className="border-b border-border">
-          <NewAndNotable />
+          <MusicSection />
         </div>
-        <div className="border-b border-border">
-          <LatestVideos />
-        </div>
-        <LatestNews />
       </main>
       <Footer />
     </div>

@@ -160,12 +160,12 @@ const TvShowsSection = () => {
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-end gap-4">
             <h2 className="text-2xl font-bold text-foreground">TV Shows</h2>
-            <a
+            {/* <a
               href="/tv/"
               className="text-xs font-bold text-muted-foreground tracking-widest pb-1 hover:text-foreground"
             >
               TV HOME
-            </a>
+            </a> */}
           </div>
           <div className="flex items-center gap-2">
             <button

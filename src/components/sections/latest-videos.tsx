@@ -5,25 +5,29 @@ import Image from "next/image";
 import { Play, Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+interface LatestVideosProps {
+  filterByTag?: string;
+}
+
 type Video = {
   id: number;
   title: string;
   thumbnail: string;
   duration: string;
-  type: string;
+  type: 'movie' | 'game' | 'tv show';
   metascore?: 'tbd';
   metascoreInfo?: string;
 };
 
+// Check your video data - make sure movie videos have type: "movie"
 const videosData: Video[] = [
   {
     id: 1,
-    title: 'Hades II – v1.0 Launch Trailer (Coming Sep. 25!)',
-    thumbnail: 'https://cdn.jwplayer.com/v2/media/ClE6WZQW/poster.jpg?width=720',
-    duration: '2:36',
-    type: 'game',
-    metascore: 'tbd',
-    metascoreInfo: 'Available after 4 critic reviews'
+    title: "Spider-Man: Beyond the Spider-Verse",
+    thumbnail: "/videos/spiderman.jpg",
+    duration: "2:31",
+    type: "movie", // Ensure correct type
+    metascore: "tbd"
   },
   {
     id: 2,
@@ -55,8 +59,21 @@ const videosData: Video[] = [
   }
 ];
 
-export default function LatestVideos() {
+export default function LatestVideos({ filterByTag }: LatestVideosProps) {
   const [activeVideo, setActiveVideo] = useState<Video>(videosData[0]);
+
+  // Add console.log to debug
+  console.log('filterByTag:', filterByTag);
+  
+  // Filter videos based on the tag
+  const filteredVideos = filterByTag 
+    ? videosData.filter(video => video.type === filterByTag.toLowerCase())
+    : videosData;
+
+  console.log('filtered videos:', filteredVideos);
+
+  // Use filtered videos instead of videosData directly
+  const displayVideos = filterByTag ? filteredVideos : videosData;
 
   return (
     <section className="container py-8">
@@ -111,7 +128,7 @@ export default function LatestVideos() {
 
         <div className="lg:col-span-1 mt-8 lg:mt-0">
           <div className="flex flex-col gap-1">
-            {videosData.map((video) => (
+            {displayVideos.map((video) => (
               <button
                 key={video.id}
                 onClick={() => setActiveVideo(video)}

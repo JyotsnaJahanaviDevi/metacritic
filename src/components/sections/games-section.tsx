@@ -240,9 +240,9 @@ export default function GamesSection() {
         <div className="flex justify-between items-baseline mb-4">
           <div className="flex items-baseline space-x-4">
             <h2 className="text-2xl font-bold text-foreground">Games</h2>
-            <a href="/game/" className="text-xs font-semibold text-muted tracking-wider hover:text-primary">
+            {/* <a href="/game/" className="text-xs font-semibold text-muted tracking-wider hover:text-primary">
               GAMES HOME
-            </a>
+            </a> */}
           </div>
           <div className="flex items-center space-x-1">
             <button

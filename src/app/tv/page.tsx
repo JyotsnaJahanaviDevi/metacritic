@@ -18,7 +18,7 @@ export default function TvPage() {
         <div className="border-b border-border">
           <TvShowsSection />
         </div>
-        <LatestNews />
+        <LatestNews filterByTag="tv show" />
       </main>
       <Footer />
     </div>

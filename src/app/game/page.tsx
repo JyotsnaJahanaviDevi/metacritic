@@ -16,9 +16,9 @@ export default function GamePage() {
           <GamesSection />
         </div>
         <div className="border-b border-border">
-          <EditorialSpotlight />
+          <EditorialSpotlight filterByTag="game" />
         </div>
-        <LatestNews />
+        <LatestNews filterByTag="game" />
       </main>
       <Footer />
     </div>

@@ -15,12 +15,10 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
       <main>
         <NewAndNotable />
-        
         <div className="border-b border-border">
-          <EditorialSpotlight />
+          <EditorialSpotlight /> {/* No filterByTag prop = show all */}
         </div>
         
         <div className="border-b border-border">
@@ -53,7 +51,6 @@ export default function HomePage() {
         
         <LatestNews />
       </main>
-      
       <Footer />
     </div>
   );

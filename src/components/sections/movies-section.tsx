@@ -105,7 +105,7 @@ const MoviesSection: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-baseline">
             <h2 className="text-2xl font-bold text-foreground">Movies</h2>
-            <a href="#" className="ml-4 text-xs font-semibold uppercase text-muted-foreground tracking-wider">Movies Home</a>
+            {/* <a href="#" className="ml-4 text-xs font-semibold uppercase text-muted-foreground tracking-wider">Movies Home</a> */}
           </div>
           <div className="flex items-center gap-2">
             <button
