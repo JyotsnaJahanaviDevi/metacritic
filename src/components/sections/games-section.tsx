@@ -248,7 +248,7 @@ export default function GamesSection() {
             <button
               onClick={() => scroll("left")}
               disabled={!canScrollLeft}
-              className="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center shadow-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-secondary transition-colors"
+              className="w-9 h-9 flex items-center justify-center rounded-full border border-border hover:bg-secondary transition-colors"
                 aria-label="Scroll left"
             >
               <ChevronLeft className="w-6 h-6 text-foreground" />
@@ -256,7 +256,7 @@ export default function GamesSection() {
             <button
               onClick={() => scroll("right")}
               disabled={!canScrollRight}
-              className="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center shadow-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-secondary transition-colors"
+              className="w-9 h-9 flex items-center justify-center rounded-full border border-border hover:bg-secondary transition-colors"
               aria-label="Scroll right"
             >
               <ChevronRight className="w-6 h-6 text-foreground" />

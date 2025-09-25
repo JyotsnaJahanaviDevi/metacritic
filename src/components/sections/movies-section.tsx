@@ -7,40 +7,78 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 type Movie = {
   title: string;
   score: number;
-  description: string;
+  ratingText: string;
   imageUrl: string;
-  url: string;
+  link: string;
 };
 
-const moviesData: Movie[] = [
-  { title: "Plainclothes", score: 66, description: "Generally Favorable", imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-e22a7f0525d88acc150d1e370dd54c41.jpg", url: "#" },
-  { title: "Another End", score: 52, description: "Mixed or Average", imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-0e1bd957c5f850d94f296ac5d2dc3b03.jpg", url: "#" },
-  { title: "The Summer Book", score: 61, description: "Generally Favorable", imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-4b8c9424bd0e49520a7cf6433e143048.jpg", url: "#" },
-  { title: "Doin' It", score: 51, description: "Mixed or Average", imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-02e071e626bb36c73c23ca5551c6ac40.jpg", url: "#" },
-  { title: "Megadoc", score: 73, description: "Generally Favorable", imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-72cd1a877567e7a83d0f075d5f1ff4bd.jpg", url: "#" },
-  { title: "Steve", score: 65, description: "Generally Favorable", imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-e3d8c11e03c2317b2f6381bc59b95be4.jpg", url: "#" },
-  { title: "Him", score: 39, description: "Generally Unfavorable", imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-f0fec85a22d25e0a0f0ce1fd27c62c90.jpg", url: "#" },
-  { title: "The Senior", score: 60, description: "Mixed or Average", imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-d6682672b988f6a911a3648a31802a83.jpg", url: "#" },
-  { title: "Waltzing with Brando", score: 40, description: "Mixed or Average", imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-8e54737d7a746522f7ed946e300ac3ce.jpg", url: "#" },
-  { title: "Adulthood", score: 53, description: "Mixed or Average", imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-2e9fe556bf6eaf2e88225586617a7ec4.jpg", url: "#" },
-  { title: "Swiped", score: 42, description: "Mixed or Average", imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-b45b4c4ba9825b41d2f7f9035c93d9b5.jpg", url: "#" },
-  { title: "Predators", score: 83, description: "Universal Acclaim", imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-25f0a59be083236e6113b28b78917e82.jpg", url: "#" },
-  { title: "A Big Bold Beautiful Journey", score: 42, description: "Mixed or Average", imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-216997a3cf1467406c4b2bda8571ea3a.jpg", url: "#" },
-  { title: "The Lost Bus", score: 64, description: "Generally Favorable", imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-c68e1ab046ddc73562419409fd843813.jpg", url: "#" },
-  { title: "Sunfish (& Other Stories on Green Lake)", score: 79, description: "Generally Favorable", imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-d0891dff320e8b15d2a6a133f8eff0eb.jpg", url: "#" },
-  { title: "The Man in My Basement", score: 51, description: "Mixed or Average", imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-be089aacbc01594916aab4b136d8d85f.jpg", url: "#" },
-  { title: "Happyend", score: 75, description: "Generally Favorable", imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-6d601d0a520ff51d18f5044455f75e03.jpg", url: "#" },
+const newReleases: Movie[] = [
+  {
+    title: "28 Years Later",
+    score: 77,
+    ratingText: "Generally Favorable",
+    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-1758550186.jpg?auto=webp",
+    link: "https://www.metacritic.com/movie/28-years-later/",
+  },
+  {
+    title: "Superman",
+    score: 68,
+    ratingText: "Generally Favorable",
+    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-1758603611.jpg?auto=webp",
+    link: "https://www.metacritic.com/movie/superman-2025/",
+  },
+  {
+    title: "Zero Days",
+    score: 77,
+    ratingText: "Generally Favorable",
+    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-gbi_0_6-896803.jpg?auto=webp",
+    link: "https://www.metacritic.com/movie/zero-days/",
+  },
 ];
 
+const topCriticsPicks: Movie[] = [
+    {
+    title: "Airplane!",
+    score: 78,
+    ratingText: "Generally Favorable",
+    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-m_0_6-11883.jpg?auto=webp",
+    link: "https://www.metacritic.com/movie/airplane!/",
+  },
+  {
+    title: "28 Days Later...",
+    score: 73,
+    ratingText: "Generally Favorable",
+    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-m_0_6-8869.jpg?auto=webp",
+    link: "https://www.metacritic.com/movie/28-days-later/",
+  },
+];
+
+const mostPopular: Movie[] = [
+    {
+    title: "Warfare",
+    score: 78,
+    ratingText: "Generally Favorable",
+    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-1758416049.jpeg?auto=webp",
+    link: "https://www.metacritic.com/movie/warfare/",
+  },
+];
+
+const TABS = ["New Releases", "Top Critics' Picks", "Most Popular"];
+
+const movieData: { [key: string]: Movie[] } = {
+  "New Releases": newReleases,
+  "Top Critics' Picks": topCriticsPicks,
+  "Most Popular": mostPopular,
+};
 const getScoreColor = (score: number) => {
   if (score >= 75) return 'bg-score-green';
   if (score >= 50) return 'bg-score-orange';
   return 'bg-score-red';
 };
 
-const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => (
+const MovieCard = ({ movie }: { movie: Movie }) => (
   <div className="flex-shrink-0 w-[150px]">
-    <a href={movie.url} className="group block">
+    <a href={movie.link} className="group block">
       <div className="w-full aspect-[2/3] rounded-md overflow-hidden bg-muted">
         <Image
           src={movie.imageUrl}
@@ -56,106 +94,104 @@ const MovieCard: React.FC<{ movie: Movie }> = ({ movie }) => (
       <div className={`w-8 h-8 flex items-center justify-center rounded font-bold text-lg text-white ${getScoreColor(movie.score)}`}>
         {movie.score}
       </div>
-      <p className="text-xs text-muted-foreground">{movie.description}</p>
+      <p className="text-xs text-muted-foreground">{movie.ratingText}</p>
     </div>
   </div>
 );
 
-const MoviesSection: React.FC = () => {
-  const TABS = ["New Releases", "Top Critics' Picks", "Most Popular"];
+export default function MoviesSection() {
   const [activeTab, setActiveTab] = useState(TABS[0]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
 
-  const checkScrollability = useCallback(() => {
+  const handleScroll = useCallback(() => {
     const container = scrollContainerRef.current;
     if (container) {
-      const { scrollLeft, scrollWidth, clientWidth } = container;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth -1);
+      setCanScrollLeft(container.scrollLeft > 0);
+      setCanScrollRight(container.scrollLeft < container.scrollWidth - container.clientWidth - 1);
     }
   }, []);
 
   useEffect(() => {
-    checkScrollability();
     const container = scrollContainerRef.current;
-    container?.addEventListener('scroll', checkScrollability);
-    window.addEventListener('resize', checkScrollability);
+    if (container) {
+      handleScroll(); // Initial check
+      container.addEventListener("scroll", handleScroll);
+      return () => container.removeEventListener("scroll", handleScroll);
+    }
+  }, [handleScroll]);
 
-    return () => {
-      container?.removeEventListener('scroll', checkScrollability);
-      window.removeEventListener('resize', checkScrollability);
-    };
-  }, [checkScrollability]);
-
-  const handleScroll = (direction: 'left' | 'right') => {
+  // Reset scroll on tab change
+  useEffect(() => {
     if (scrollContainerRef.current) {
-      const scrollAmount = scrollContainerRef.current.clientWidth * 0.8;
-      scrollContainerRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth',
-      });
+        scrollContainerRef.current.scrollLeft = 0;
+    }
+    handleScroll();
+  }, [activeTab, handleScroll]);
+
+  const scroll = (direction: "left" | "right") => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = direction === "left" ? -550 : 550;
+      scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
 
   return (
-    <section className="py-8">
-      <div className="container max-w-6xl mx-auto px-4">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-baseline">
-            <h2 className="text-2xl font-bold text-foreground">Movies</h2>
-            {/* <a href="#" className="ml-4 text-xs font-semibold uppercase text-muted-foreground tracking-wider">Movies Home</a> */}
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => handleScroll('left')}
-              disabled={!canScrollLeft}
-              aria-label="Scroll left"
-              className="w-9 h-9 rounded-full border border-border flex items-center justify-center bg-card shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronLeft className="w-5 h-5 text-foreground" />
-            </button>
-            <button
-              onClick={() => handleScroll('right')}
-              disabled={!canScrollRight}
-              aria-label="Scroll right"
-              className="w-9 h-9 rounded-full border-2 border-foreground flex items-center justify-center bg-card shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronRight className="w-5 h-5 text-foreground" />
-            </button>
-          </div>
-        </div>
-
-        <div className="border-b border-border mb-6">
-          <div className="flex items-center">
-            {TABS.map((tab) => (
+      <section className="py-8">
+        <div className="container px-4">
+          <div className="flex justify-between items-baseline mb-4">
+            <div className="flex items-baseline space-x-4">
+              <h2 className="text-2xl font-bold text-foreground">Movies</h2>
+              {/* <a href="/game/" className="text-xs font-semibold text-muted tracking-wider hover:text-primary">
+                GAMES HOME
+              </a> */}
+            </div>
+            <div className="flex items-center space-x-1">
               <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`py-2 px-1 mr-6 text-sm font-medium transition-colors ${
-                  activeTab === tab
-                    ? 'text-foreground border-b-2 border-primary'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
+                onClick={() => scroll("left")}
+                disabled={!canScrollLeft}
+                className="w-9 h-9 flex items-center justify-center rounded-full border border-border hover:bg-secondary transition-colors"
+                  aria-label="Scroll left"
               >
-                {tab}
+                <ChevronLeft className="w-6 h-6 text-foreground" />
               </button>
-            ))}
+              <button
+                onClick={() => scroll("right")}
+                disabled={!canScrollRight}
+                className="w-9 h-9 flex items-center justify-center rounded-full border border-border hover:bg-secondary transition-colors"
+                aria-label="Scroll right"
+              >
+                <ChevronRight className="w-6 h-6 text-foreground" />
+              </button>
+            </div>
+          </div>
+          <div className="border-b border-border">
+            <div className="flex space-x-6">
+              {TABS.map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`pb-2 text-lg font-semibold transition-colors
+                    ${activeTab === tab ? "text-primary border-b-2 border-primary" : "text-muted-foreground hover:text-primary"}`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="relative mt-6">
+            <div
+              ref={scrollContainerRef}
+              className="flex space-x-4 overflow-x-auto scroll-smooth pb-2 -mb-2"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              {movieData[activeTab]?.map((movie, index) => (
+                <MovieCard key={`${activeTab}-${index}`} movie={movie} />
+              ))}
+            </div>
           </div>
         </div>
-
-        <div
-          ref={scrollContainerRef}
-          className="flex overflow-x-auto pb-4 -mb-4 gap-4 scroll-smooth scrollbar-hide"
-        >
-          {moviesData.map((movie, index) => (
-            <MovieCard key={index} movie={movie} />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-export default MoviesSection;
+      </section>
+    );
+  }

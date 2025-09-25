@@ -157,7 +157,7 @@ const TrendingShows = () => {
             </button>
             <button
               onClick={() => scroll('right')}
-              className="w-9 h-9 flex items-center justify-center rounded-full border-2 border-primary bg-card hover:bg-secondary transition-colors"
+              className="w-9 h-9 flex items-center justify-center rounded-full border-2 border-border bg-card hover:bg-secondary transition-colors"
               aria-label="Scroll right"
             >
               <ChevronRight className="w-6 h-6 text-foreground" />

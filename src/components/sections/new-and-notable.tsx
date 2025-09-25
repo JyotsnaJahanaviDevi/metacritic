@@ -230,7 +230,7 @@ export default function NewAndNotable() {
           <button onClick={() => scroll('left')} aria-label="Scroll left" className="w-9 h-9 flex items-center justify-center rounded-full border border-border hover:bg-secondary transition-colors">
             <ChevronLeft className="w-5 h-5 text-foreground" />
           </button>
-          <button onClick={() => scroll('right')} aria-label="Scroll right" className="w-9 h-9 flex items-center justify-center rounded-full border-2 border-foreground hover:bg-secondary transition-colors">
+          <button onClick={() => scroll('right')} aria-label="Scroll right" className="w-9 h-9 flex items-center justify-center rounded-full border border-border hover:bg-secondary transition-colors">
             <ChevronRight className="w-5 h-5 text-foreground" />
           </button>
         </div>

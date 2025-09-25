@@ -134,7 +134,7 @@ const EditorialSpotlight = ({ filterByTag }: EditorialSpotlightProps) => {
             <button 
               onClick={() => handleScroll('left')} 
               disabled={!canScrollLeft}
-              className="w-9 h-9 flex items-center justify-center rounded-full bg-white border border-border disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-white border border-border disabled:opacity-40 disabled:cursor-default"
               aria-label="Scroll left"
             >
               <ChevronLeft className="w-5 h-5 text-foreground" />
@@ -142,7 +142,7 @@ const EditorialSpotlight = ({ filterByTag }: EditorialSpotlightProps) => {
             <button 
               onClick={() => handleScroll('right')}
               disabled={!canScrollRight}
-              className="w-9 h-9 flex items-center justify-center rounded-full bg-white border border-border disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-white border border-border disabled:opacity-40 disabled:cursor-default"
               aria-label="Scroll right"
             >
               <ChevronRight className="w-5 h-5 text-foreground" />

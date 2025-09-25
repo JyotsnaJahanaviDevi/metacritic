@@ -4,18 +4,25 @@ import LatestVideos from "@/components/sections/latest-videos";
 import LatestNews from "@/components/sections/latest-news";
 import Footer from "@/components/sections/footer";
 import MusicSection from "@/components/sections/music-section";
+import BestAlbumsWeek from "@/components/sections/best-albums-week";
+import NewReleasesByDate from "@/components/sections/new-releases-by-date";
 
 export default function MusicPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main>
-        <section className="container px-4 py-6">
-          <h1 className="text-3xl font-bold">Music</h1>
-        </section>
         <div className="border-b border-border">
           <MusicSection />
         </div>
+        <div className="border-b border-border">
+          <BestAlbumsWeek />
+        </div>
+        <div className="border-b border-border">
+          <NewReleasesByDate />
+        </div>
+        
+        <LatestNews />
       </main>
       <Footer />
     </div>
