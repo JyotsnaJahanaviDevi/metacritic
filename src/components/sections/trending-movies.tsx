@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -12,113 +12,8 @@ type Movie = {
   link: string;
 };
 
-const trendingMovies: Movie[] = [
-  {
-    title: "28 Years Later",
-    score: 77,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-1758550186.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/28-years-later/",
-  },
-  {
-    title: "Superman",
-    score: 68,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-1758603611.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/superman-2025/",
-  },
-  {
-    title: "Zero Days",
-    score: 77,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-gbi_0_6-896803.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/zero-days/",
-  },
-  {
-    title: "Airplane!",
-    score: 78,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-m_0_6-11883.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/airplane!/",
-  },
-  {
-    title: "28 Days Later...",
-    score: 73,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-m_0_6-8869.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/28-days-later/",
-  },
-  {
-    title: "Lucky",
-    score: 80,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-879109.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/lucky-2017/",
-  },
-  {
-    title: "Warfare",
-    score: 78,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-1758416049.jpeg?auto=webp",
-    link: "https://www.metacritic.com/movie/warfare/",
-  },
-  {
-    title: "The Square",
-    score: 73,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-880629.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/the-square-2017/",
-  },
-  {
-    title: "Friendship",
-    score: 72,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-1758416047.jpeg?auto=webp",
-    link: "https://www.metacritic.com/movie/friendship/",
-  },
-  {
-    title: "28 Weeks Later",
-    score: 78,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-724131.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/28-weeks-later/",
-  },
-  {
-    title: "Sinners",
-    score: 84,
-    ratingText: "Universal Acclaim",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-1758532450.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/sinners/",
-  },
-  {
-    title: "The Thursday Murder Club",
-    score: 60,
-    ratingText: "Mixed or Average",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-1758550189.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/the-thursday-murder-club/",
-  },
-  {
-    title: "Thunderbolts*",
-    score: 68,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-1758603610.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/thunderbolts/",
-  },
-  {
-    title: "Mister America",
-    score: 42,
-    ratingText: "Mixed or Average",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-1748259838.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/mister-america/",
-  },
-  {
-    title: "Black Bag",
-    score: 85,
-    ratingText: "Universal Acclaim",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-1758550175.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/black-bag/",
-  },
-];
+// Will be loaded from API
+const trendingMovies: Movie[] = [];
 
 const getScoreColor = (score: number) => {
   if (score >= 75) return "bg-score-green";
@@ -172,6 +67,10 @@ const MovieCard = ({ movie }: { movie: Movie }) => (
 
 const TrendingMoviesSection = () => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [movies, setMovies] = useState<Movie[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+    const cacheRef = useRef<Movie[] | null>(null);
 
     const scroll = (direction: 'left' | 'right') => {
         if (scrollContainerRef.current) {
@@ -182,6 +81,33 @@ const TrendingMoviesSection = () => {
             });
         }
     };
+
+    useEffect(() => {
+        let cancelled = false;
+        async function load() {
+            setError(null);
+            if (cacheRef.current) {
+                setMovies(cacheRef.current);
+                setLoading(false);
+                return;
+            }
+            setLoading(true);
+            try {
+                const res = await fetch('/api/trending-movies');
+                if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+                const data = await res.json();
+                const results = (data.results || []) as Movie[];
+                cacheRef.current = results;
+                if (!cancelled) setMovies(results);
+            } catch (e: any) {
+                if (!cancelled) setError(e?.message || 'Failed to load trending movies');
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        }
+        load();
+        return () => { cancelled = true; };
+    }, []);
 
     return (
         <section className="py-8">
@@ -204,7 +130,18 @@ const TrendingMoviesSection = () => {
                         className="flex space-x-4 overflow-x-auto pb-4 -mb-4 scroll-smooth"
                         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     >
-                        {trendingMovies.map((movie, index) => (
+                        {loading && !movies.length && (
+                          <>
+                            {Array.from({ length: 8 }).map((_, i) => (
+                              <div key={`s-${i}`} className="flex-shrink-0 w-[150px] animate-pulse">
+                                <div className="w-[150px] h-[225px] bg-secondary rounded" />
+                                <div className="h-4 bg-secondary rounded mt-2 w-3/4" />
+                              </div>
+                            ))}
+                          </>
+                        )}
+                        {error && <div className="py-8 text-sm text-destructive">{error}</div>}
+                        {!loading && !error && movies.map((movie, index) => (
                             <MovieCard key={index} movie={movie} />
                         ))}
                     </div>

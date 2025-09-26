@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -15,88 +15,8 @@ interface Show {
   watchUrl: string;
 }
 
-const trendingShowsData: Show[] = [
-  {
-    title: "Black Rabbit",
-    score: 62,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/resize/4d414a93f545417641d8e0689b9d3d3b76e5c949/catalog/provider/6/1/6-3a57a6279f53e5f416ab0c1f55b1bde8.jpg?auto=webp&fit=crop&height=222&width=150",
-    url: "/tv/black-rabbit/",
-    watchUrl: "#"
-  },
-  {
-    title: "Alien: Earth",
-    score: 85,
-    ratingText: "Universal Acclaim",
-    imageUrl: "https://www.metacritic.com/a/img/resize/f243048598463eacc765f05b584a25d6e24ddd67/catalog/provider/2/13/2-996ff6bf60742d477bb5500e5251648a.jpg?auto=webp&fit=crop&height=222&width=150",
-    url: "/tv/alien-earth/",
-    watchUrl: "#"
-  },
-  {
-    title: "Task",
-    score: 77,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/resize/924f705597a7e7ac8aa83416f0cd1706f3531b78/catalog/provider/2/13/2-748507ee7d2f3cd229340f1a6fcf7446.jpg?auto=webp&fit=crop&height=222&width=150",
-    url: "/tv/task/",
-    watchUrl: "#"
-  },
-  {
-    title: "Only Murders in the Building",
-    score: 77,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/resize/2e8c281358043685e1329a174fde3d4c38d4ed0c/catalog/provider/2/13/2-9f37c222bf0504149e8cbc04d5503099.jpg?auto=webp&fit=crop&height=222&width=150",
-    url: "/tv/only-murders-in-the-building/",
-    watchUrl: "#"
-  },
-  {
-    title: "Marvel's Daredevil",
-    score: 72,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/resize/624c4e0b021d7b38d3ca24d86898b0f7193240e5/catalog/provider/2/13/2-386b6ac4f469950d9990868f0a1c3d0b.jpg?auto=webp&fit=crop&height=222&width=150",
-    url: "/tv/marvels-daredevil/",
-    watchUrl: "#"
-  },
-  {
-    title: "Gen V",
-    score: 73,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/resize/fedfd95914fa036e55bbdfb6033328e83b482352/catalog/provider/2/13/2-a5ec08c903a4b6bf5cb3ccbaaa289656.jpg?auto=webp&fit=crop&height=222&width=150",
-    url: "/tv/gen-v/",
-    watchUrl: "#"
-  },
-  {
-    title: "Slow Horses",
-    score: 83,
-    ratingText: "Universal Acclaim",
-    imageUrl: "https://www.metacritic.com/a/img/resize/060b86a83688cd2677d206259e80c65511cbdd17/catalog/provider/2/13/2-3907e7b6d92f9e4142fd24177d64380b.jpg?auto=webp&fit=crop&height=222&width=150",
-    url: "/tv/slow-horses/",
-    watchUrl: "#"
-  },
-  {
-    title: "Peacemaker",
-    score: 73,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/resize/2311855a90ad11cafff475b6838a34241e7f3427/catalog/provider/2/13/2-fb68c8577041aa2a945d8b2d8d80f682.jpg?auto=webp&fit=crop&height=222&width=150",
-    url: "/tv/peacemaker/",
-    watchUrl: "#"
-  },
-  {
-    title: "Jimmy Kimmel Live",
-    score: "tbd",
-    ratingText: "",
-    imageUrl: "https://www.metacritic.com/a/img/resize/8f203dd01789c67ce7b489a81e3751a1cd40aede/catalog/provider/2/13/2-9e96fbb5de7dbf3d1b0922881a705141.jpg?auto=webp&fit=crop&height=222&width=150",
-    url: "/tv/jimmy-kimmel-live/",
-    watchUrl: "#"
-  },
-  {
-    title: "Tulsa King",
-    score: 65,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/resize/81e57a3e7902d515a4b1248eb3a9e63c7886d7bc/catalog/provider/2/13/2-f8312521f1589255a02256df2cf3578b.jpg?auto=webp&fit=crop&height=222&width=150",
-    url: "/tv/tulsa-king/",
-    watchUrl: "#"
-  }
-];
+// Will be loaded from API
+const trendingShowsData: Show[] = [];
 
 const getScoreColor = (score: number | 'tbd') => {
   if (score === 'tbd') return 'border border-border bg-white text-foreground';
@@ -122,6 +42,10 @@ const JustWatchLogo = () => (
 
 const TrendingShows = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [shows, setShows] = useState<Show[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const cacheRef = useRef<Show[] | null>(null);
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
@@ -132,6 +56,33 @@ const TrendingShows = () => {
       });
     }
   };
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setError(null);
+      if (cacheRef.current) {
+        setShows(cacheRef.current);
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      try {
+        const res = await fetch('/api/trending-shows');
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        const data = await res.json();
+        const results = (data.results || []) as Show[];
+        cacheRef.current = results;
+        if (!cancelled) setShows(results);
+      } catch (e: any) {
+        if (!cancelled) setError(e?.message || 'Failed to load trending shows');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <>
@@ -166,7 +117,18 @@ const TrendingShows = () => {
         </div>
         <div className="relative">
           <div ref={scrollContainerRef} className="flex overflow-x-auto space-x-4 pb-4 scrollbar-hide">
-            {trendingShowsData.map((show, index) => (
+          {loading && !shows.length && (
+            <>
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={`s-${i}`} className="flex-shrink-0 w-[150px] animate-pulse">
+                  <div className="w-[150px] h-[222px] bg-secondary rounded" />
+                  <div className="h-4 bg-secondary rounded mt-2 w-3/4" />
+                </div>
+              ))}
+            </>
+          )}
+            {error && <div className="py-8 text-sm text-destructive">{error}</div>}
+            {!loading && !error && shows.map((show, index) => (
               <div key={index} className="flex-shrink-0 w-[150px]">
                 <Link href={show.url}>
                     <Image

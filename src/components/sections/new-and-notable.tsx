@@ -1,165 +1,20 @@
 "use client";
 
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, ImageIcon } from 'lucide-react';
 
 interface NotableItem {
   imageSrc: string | null;
   title: string;
-  type: 'tv show' | 'game' | 'movie' | 'season';
+  type: 'tv show' | 'game' | 'movie' | 'season' | 'music';
   metascore: number;
   scoreText: string;
   reviewCount: number;
   url: string;
 }
 
-const notableData: NotableItem[] = [
-  {
-    imageSrc: 'https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/33948b3a-03f0-422c-8a95-9c28dffaf395-metacritic-com/assets/images/poster-14.jpg?',
-    title: 'The Lowdown',
-    type: 'tv show',
-    metascore: 87,
-    scoreText: 'Universal Acclaim',
-    reviewCount: 24,
-    url: 'https://www.metacritic.com/tv/the-lowdown/',
-  },
-  {
-    imageSrc: 'https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/33948b3a-03f0-422c-8a95-9c28dffaf395-metacritic-com/assets/images/poster-15.jpg?',
-    title: 'Silent Hill f',
-    type: 'game',
-    metascore: 86,
-    scoreText: 'Generally Favorable',
-    reviewCount: 80,
-    url: 'https://www.metacritic.com/game/silent-hill-f/',
-  },
-  {
-    imageSrc: 'https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/test-clones/33948b3a-03f0-422c-8a95-9c28dffaf395-metacritic-com/assets/images/poster-11.jpg?',
-    title: 'One Battle After Another',
-    type: 'movie',
-    metascore: 96,
-    scoreText: 'Universal Acclaim',
-    reviewCount: 40,
-    url: 'https://www.metacritic.com/movie/one-battle-after-another/',
-  },
-  {
-    imageSrc: null,
-    title: 'Baby Steps',
-    type: 'game',
-    metascore: 77,
-    scoreText: 'Generally Favorable',
-    reviewCount: 19,
-    url: 'https://www.metacritic.com/game/baby-steps/',
-  },
-  {
-    imageSrc: null,
-    title: 'Slow Horses: Season 5',
-    type: 'season',
-    metascore: 85,
-    scoreText: 'Universal Acclaim',
-    reviewCount: 6,
-    url: 'https://www.metacritic.com/tv/slow-horses/season-5/',
-  },
-  {
-    imageSrc: null,
-    title: 'Dying Light: The Beast',
-    type: 'game',
-    metascore: 79,
-    scoreText: 'Generally Favorable',
-    reviewCount: 56,
-    url: 'https://www.metacritic.com/game/dying-light-the-beast/',
-  },
-  {
-    imageSrc: null,
-    title: 'Hollow Knight: Silksong',
-    type: 'game',
-    metascore: 92,
-    scoreText: 'Universal Acclaim',
-    reviewCount: 33,
-    url: 'https://www.metacritic.com/game/hollow-knight-silksong/',
-  },
-  {
-    imageSrc: null,
-    title: 'Trails in the Sky 1st Chapter',
-    type: 'game',
-    metascore: 90,
-    scoreText: 'Universal Acclaim',
-    reviewCount: 14,
-    url: 'https://www.metacritic.com/game/trails-in-the-sky-1st-chapter/',
-  },
-  {
-    imageSrc: null,
-    title: 'Sonic Racing: CrossWorlds',
-    type: 'game',
-    metascore: 83,
-    scoreText: 'Generally Favorable',
-    reviewCount: 57,
-    url: 'https://www.metacritic.com/game/sonic-racing-crossworlds/',
-  },
-  {
-    imageSrc: null,
-    title: 'EA Sports FC 26',
-    type: 'game',
-    metascore: 83,
-    scoreText: 'Generally Favorable',
-    reviewCount: 22,
-    url: 'https://www.metacritic.com/game/ea-sports-fc-26/',
-  },
-  {
-    imageSrc: null,
-    title: 'Him',
-    type: 'movie',
-    metascore: 39,
-    scoreText: 'Generally Unfavorable',
-    reviewCount: 33,
-    url: 'https://www.metacritic.com/movie/him/',
-  },
-  {
-    imageSrc: null,
-    title: 'Borderlands 4',
-    type: 'game',
-    metascore: 82,
-    scoreText: 'Generally Favorable',
-    reviewCount: 82,
-    url: 'https://www.metacritic.com/game/borderlands-4/',
-  },
-  {
-    imageSrc: null,
-    title: 'Black Rabbit',
-    type: 'tv show',
-    metascore: 62,
-    scoreText: 'Generally Favorable',
-    reviewCount: 22,
-    url: 'https://www.metacritic.com/tv/black-rabbit/',
-  },
-  {
-    imageSrc: null,
-    title: 'Demon Slayer -Kimetsu no Yaiba- The Movie: Infinity Castle',
-    type: 'movie',
-    metascore: 69,
-    scoreText: 'Generally Favorable',
-    reviewCount: 9,
-    url: 'https://www.metacritic.com/movie/demon-slayer--kimetsu-no-yaiba--the-movie-infinity-castle/',
-  },
-  {
-    imageSrc: null,
-    title: 'Cronos: The New Dawn',
-    type: 'game',
-    metascore: 77,
-    scoreText: 'Generally Favorable',
-    reviewCount: 76,
-    url: 'https://www.metacritic.com/game/cronos-the-new-dawn/',
-  },
-  {
-    imageSrc: null,
-    title: 'Hell is Us',
-    type: 'game',
-    metascore: 77,
-    scoreText: 'Generally Favorable',
-    reviewCount: 54,
-    url: 'https://www.metacritic.com/game/hell-is-us/',
-  },
-];
+const notableData: NotableItem[] = [];
 
 const getScoreColorClass = (score: number) => {
   if (score >= 75) return 'bg-score-green';
@@ -211,6 +66,10 @@ const NotableCard = ({ item }: { item: NotableItem }) => {
 
 export default function NewAndNotable() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [items, setItems] = useState<NotableItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const cacheRef = useRef<NotableItem[] | null>(null);
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
@@ -221,6 +80,33 @@ export default function NewAndNotable() {
       });
     }
   };
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setError(null);
+      if (cacheRef.current) {
+        setItems(cacheRef.current);
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      try {
+        const res = await fetch('/api/new-and-notable');
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        const data = await res.json();
+        const results = (data.results || []) as NotableItem[];
+        cacheRef.current = results;
+        if (!cancelled) setItems(results);
+      } catch (e: any) {
+        if (!cancelled) setError(e?.message || 'Failed to load');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <section className="container mx-auto py-8 border-b border-border">
@@ -239,7 +125,19 @@ export default function NewAndNotable() {
         ref={scrollContainerRef}
         className="flex overflow-x-auto space-x-4 pb-4 scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
-        {notableData.map((item, index) => (
+        {loading && !items.length && (
+          <>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={`s-${i}`} className="snap-start block w-[300px] flex-shrink-0">
+                <div className="w-[300px] h-[170px] bg-secondary rounded" />
+                <div className="h-5 bg-secondary rounded mt-3 w-5/6" />
+                <div className="h-4 bg-secondary rounded mt-2 w-1/3" />
+              </div>
+            ))}
+          </>
+        )}
+        {error && <div className="py-8 text-sm text-destructive">{error}</div>}
+        {!loading && !error && items.map((item, index) => (
           <div key={index} className="snap-start">
             <NotableCard item={item} />
           </div>

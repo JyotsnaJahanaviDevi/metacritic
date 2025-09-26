@@ -34,3 +34,23 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## TMDb Movies (optional)
+
+To populate the Movies section with live data from TMDb:
+
+1. Create an API key at `https://www.themoviedb.org/settings/api`.
+2. Add the key to your environment (Windows PowerShell example):
+
+```powershell
+$env:TMDB_API_KEY="YOUR_KEY_HERE"
+npm run dev
+```
+
+Or create a `.env.local` file in the project root:
+
+```
+TMDB_API_KEY=YOUR_KEY_HERE
+```
+
+The UI calls `/api/movies?tab=New%20Releases|Top%20Critics'%20Picks|Most%20Popular`, which proxies TMDb and maps results to the component shape.

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, FC } from "react";
+import { useState, useRef, FC, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface TvShow {
@@ -11,99 +11,8 @@ interface TvShow {
   href: string;
 }
 
-const tvShowsData: TvShow[] = [
-  {
-    title: "The Lowdown",
-    score: 87,
-    scoreText: "Universal Acclaim",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/2/13/2-969c3a33996f01da0aa07d4b41e8c157.jpg",
-    href: "/tv/the-lowdown/",
-  },
-  {
-    title: "Haunted Hotel",
-    score: 54,
-    scoreText: "Mixed or Average",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/2/13/2-4f7f631103c804f5ca68a2ab7286de9f.jpg",
-    href: "/tv/haunted-hotel/",
-  },
-  {
-    title: "Black Rabbit",
-    score: 62,
-    scoreText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/2/13/2-70b79ac747f5a0fb75988029d5b40dff.jpg",
-    href: "/tv/black-rabbit/",
-  },
-  {
-    title: "Human",
-    score: 86,
-    scoreText: "Universal Acclaim",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/2/13/2-5645053c84f5c35b801a2f646061c0d5.jpg",
-    href: "/tv/human/",
-  },
-  {
-    title: "Reunion (2025)",
-    score: 77,
-    scoreText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/2/13/2-a0ac787c88b776c94ad8a38b29ff5ce2.jpg",
-    href: "/tv/reunion-2025/",
-  },
-  {
-    title: "The Hardacres",
-    score: 58,
-    scoreText: "Mixed or Average",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/2/13/2-680c05febe3311681944cc8ed511c9ea.jpg",
-    href: "/tv/the-hardacres/",
-  },
-  {
-    title: "aka Charlie Sheen",
-    score: 57,
-    scoreText: "Mixed or Average",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/2/13/2-1111ea3d8aa53664d55bba91b0f959c5.jpg",
-    href: "/tv/aka-charlie-sheen/",
-  },
-  {
-    title: "Mussolini: Son of the Century",
-    score: 74,
-    scoreText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/2/13/2-570cd02e4822af4fba59089f21f5ee35.jpg",
-    href: "/tv/mussolini-son-of-the-century/",
-  },
-  {
-    title: "The Girlfriend",
-    score: 70,
-    scoreText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/2/13/2-b13c72d17c70c1e7a688975a5c66d217.jpg",
-    href: "/tv/the-girlfriend/",
-  },
-  {
-    title: "Tempest (2025)",
-    score: 72,
-    scoreText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/2/13/2-094ee73e5ffbba1f6b4d30c5e7552aa9.jpg",
-    href: "/tv/tempest-2025/",
-  },
-  {
-    title: "The Crow Girl",
-    score: 71,
-    scoreText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/2/13/2-07a5180db1c54b6c33e54b6f00db15d0.jpg",
-    href: "/tv/the-crow-girl/",
-  },
-  {
-    title: "Task",
-    score: 77,
-    scoreText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/2/13/2-44675b111a43a75871f76203cfb1b6d1.jpg",
-    href: "/tv/task/",
-  },
-  {
-    title: "NCIS: Tony & Ziva",
-    score: 73,
-    scoreText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/2/13/2-d890479dd701a073f8b059f139049a4f.jpg",
-    href: "/tv/ncis-tony-ziva/",
-  },
-];
+// Data now fetched from API
+const tvShowsData: TvShow[] = [];
 
 const getScoreColor = (score: number) => {
   if (score >= 75) return "bg-score-green";
@@ -141,8 +50,57 @@ const TvShowCard: FC<{ show: TvShow }> = ({ show }) => (
 const TvShowsSection = () => {
   const [activeTab, setActiveTab] = useState("New Releases");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [shows, setShows] = useState<TvShow[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const cacheRef = useRef<Record<string, TvShow[]>>({});
 
   const TABS = ["New Releases", "Top Critics' Picks", "Most Popular"];
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setError(null);
+      const cached = cacheRef.current[activeTab];
+      if (cached && cached.length) {
+        setShows(cached);
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/tv?tab=${encodeURIComponent(activeTab)}`);
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        const data = await res.json();
+        if (!cancelled) {
+          const results = (data.results || []) as TvShow[];
+          cacheRef.current[activeTab] = results;
+          setShows(results);
+        }
+      } catch (e: any) {
+        if (!cancelled) setError(e?.message || 'Failed to load TV shows');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, [activeTab]);
+
+  // Prefetch other tabs
+  useEffect(() => {
+    const TABS = ["New Releases", "Top Critics' Picks", "Most Popular"];
+    const otherTabs = TABS.filter(t => t !== activeTab);
+    otherTabs.forEach(async (tab) => {
+      if (cacheRef.current[tab]) return;
+      try {
+        const res = await fetch(`/api/tv?tab=${encodeURIComponent(tab)}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        cacheRef.current[tab] = (data.results || []) as TvShow[];
+      } catch {}
+    });
+  }, [activeTab]);
 
   const handleScroll = (direction: "left" | "right") => {
     if (scrollContainerRef.current) {
@@ -207,7 +165,18 @@ const TvShowsSection = () => {
           ref={scrollContainerRef}
           className="flex overflow-x-auto gap-4 pt-4 pb-2 scrollbar-hide"
         >
-          {tvShowsData.map((show, index) => (
+          {loading && !shows.length && (
+            <>
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={`s-${i}`} className="flex-shrink-0 w-[150px] animate-pulse">
+                  <div className="w-[150px] h-[222px] bg-secondary rounded" />
+                  <div className="h-4 bg-secondary rounded mt-2 w-3/4" />
+                </div>
+              ))}
+            </>
+          )}
+          {error && <div className="py-8 text-sm text-destructive">{error}</div>}
+          {!loading && !error && shows.map((show, index) => (
             <TvShowCard key={index} show={show} />
           ))}
         </div>

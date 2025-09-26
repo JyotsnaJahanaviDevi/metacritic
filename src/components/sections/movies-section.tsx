@@ -12,64 +12,7 @@ type Movie = {
   link: string;
 };
 
-const newReleases: Movie[] = [
-  {
-    title: "28 Years Later",
-    score: 77,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-1758550186.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/28-years-later/",
-  },
-  {
-    title: "Superman",
-    score: 68,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-1758603611.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/superman-2025/",
-  },
-  {
-    title: "Zero Days",
-    score: 77,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-gbi_0_6-896803.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/zero-days/",
-  },
-];
-
-const topCriticsPicks: Movie[] = [
-    {
-    title: "Airplane!",
-    score: 78,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-m_0_6-11883.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/airplane!/",
-  },
-  {
-    title: "28 Days Later...",
-    score: 73,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-m_0_6-8869.jpg?auto=webp",
-    link: "https://www.metacritic.com/movie/28-days-later/",
-  },
-];
-
-const mostPopular: Movie[] = [
-    {
-    title: "Warfare",
-    score: 78,
-    ratingText: "Generally Favorable",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/6/1/6-1758416049.jpeg?auto=webp",
-    link: "https://www.metacritic.com/movie/warfare/",
-  },
-];
-
 const TABS = ["New Releases", "Top Critics' Picks", "Most Popular"];
-
-const movieData: { [key: string]: Movie[] } = {
-  "New Releases": newReleases,
-  "Top Critics' Picks": topCriticsPicks,
-  "Most Popular": mostPopular,
-};
 const getScoreColor = (score: number) => {
   if (score >= 75) return 'bg-score-green';
   if (score >= 50) return 'bg-score-orange';
@@ -104,6 +47,10 @@ export default function MoviesSection() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const cacheRef = useRef<Record<string, Movie[]>>({});
 
   const handleScroll = useCallback(() => {
     const container = scrollContainerRef.current;
@@ -129,6 +76,54 @@ export default function MoviesSection() {
     }
     handleScroll();
   }, [activeTab, handleScroll]);
+
+  // Fetch movies when tab changes with in-memory caching
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setError(null);
+      const cached = cacheRef.current[activeTab];
+      if (cached && cached.length) {
+        setMovies(cached);
+        setLoading(false);
+        // Recalculate buttons after paint
+        setTimeout(() => handleScroll(), 0);
+        return;
+      }
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/movies?tab=${encodeURIComponent(activeTab)}`);
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        const data = await res.json();
+        if (!cancelled) {
+          const results = (data.results || []) as Movie[];
+          cacheRef.current[activeTab] = results;
+          setMovies(results);
+          setTimeout(() => handleScroll(), 0);
+        }
+      } catch (e: any) {
+        if (!cancelled) setError(e?.message || 'Failed to load movies');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, [activeTab]);
+
+  // Prefetch other tabs in background for instant switching
+  useEffect(() => {
+    const otherTabs = TABS.filter(t => t !== activeTab);
+    otherTabs.forEach(async (tab) => {
+      if (cacheRef.current[tab]) return;
+      try {
+        const res = await fetch(`/api/movies?tab=${encodeURIComponent(tab)}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        cacheRef.current[tab] = (data.results || []) as Movie[];
+      } catch {}
+    });
+  }, [activeTab]);
 
   const scroll = (direction: "left" | "right") => {
     if (scrollContainerRef.current) {
@@ -186,7 +181,19 @@ export default function MoviesSection() {
               className="flex space-x-4 overflow-x-auto scroll-smooth pb-2 -mb-2"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
-              {movieData[activeTab]?.map((movie, index) => (
+              {loading && !movies.length && (
+                <>
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <div key={`s-${i}`} className="flex-shrink-0 w-[150px] animate-pulse">
+                      <div className="w-[150px] h-[225px] bg-secondary rounded-md" />
+                      <div className="h-4 bg-secondary rounded mt-2 w-3/4" />
+                      <div className="h-3 bg-secondary rounded mt-2 w-1/2" />
+                    </div>
+                  ))}
+                </>
+              )}
+              {error && <div className="py-8 text-sm text-destructive">{error}</div>}
+              {!loading && !error && movies.map((movie, index) => (
                 <MovieCard key={`${activeTab}-${index}`} movie={movie} />
               ))}
             </div>

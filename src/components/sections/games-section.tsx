@@ -163,12 +163,6 @@ const mostPopular: Game[] = [
 
 const TABS = ["New Releases", "Top Critics' Picks", "Most Popular"];
 
-const gameData: { [key: string]: Game[] } = {
-  "New Releases": newReleases,
-  "Top Critics' Picks": topCriticsPicks,
-  "Most Popular": mostPopular,
-};
-
 const getScoreColor = (score: number) => {
   if (score >= 75) return "bg-score-green";
   if (score >= 50) return "bg-score-orange";
@@ -201,6 +195,9 @@ export default function GamesSection() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [games, setGames] = useState<Game[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleScroll = useCallback(() => {
     const container = scrollContainerRef.current;
@@ -215,7 +212,12 @@ export default function GamesSection() {
     if (container) {
       handleScroll(); // Initial check
       container.addEventListener("scroll", handleScroll);
-      return () => container.removeEventListener("scroll", handleScroll);
+      const onResize = () => handleScroll();
+      window.addEventListener('resize', onResize);
+      return () => {
+        container.removeEventListener("scroll", handleScroll);
+        window.removeEventListener('resize', onResize);
+      };
     }
   }, [handleScroll]);
 
@@ -227,9 +229,45 @@ export default function GamesSection() {
     handleScroll();
   }, [activeTab, handleScroll]);
 
+  // Fetch games when tab changes
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(`/api/games?tab=${encodeURIComponent(activeTab)}`);
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        const data = await res.json();
+        if (!cancelled) {
+          const results = (data.results || []) as Game[];
+          setGames(results);
+          // Recalculate arrow enablement after DOM updates
+          setTimeout(() => handleScroll(), 0);
+        }
+      } catch (e: any) {
+        if (!cancelled) setError(e?.message || 'Failed to load games');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, [activeTab]);
+
+  // Prefetch other tabs for instant switching
+  useEffect(() => {
+    const otherTabs = TABS.filter(t => t !== activeTab);
+    otherTabs.forEach(async (tab) => {
+      try {
+        await fetch(`/api/games?tab=${encodeURIComponent(tab)}`);
+      } catch {}
+    });
+  }, [activeTab]);
+
   const scroll = (direction: "left" | "right") => {
     if (scrollContainerRef.current) {
-      const scrollAmount = direction === "left" ? -550 : 550;
+      const scrollAmount = Math.round(scrollContainerRef.current.clientWidth * 0.8) * (direction === "left" ? -1 : 1);
       scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
@@ -283,7 +321,9 @@ export default function GamesSection() {
             className="flex space-x-4 overflow-x-auto scroll-smooth pb-2 -mb-2"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {gameData[activeTab]?.map((game, index) => (
+            {loading && <div className="py-8 text-sm text-muted-foreground">Loading…</div>}
+            {error && <div className="py-8 text-sm text-destructive">{error}</div>}
+            {!loading && !error && games.map((game, index) => (
               <GameCard key={`${activeTab}-${index}`} game={game} />
             ))}
           </div>

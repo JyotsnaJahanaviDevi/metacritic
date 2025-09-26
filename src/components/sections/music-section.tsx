@@ -13,142 +13,7 @@ interface Album {
   imageUrl: string;
 }
 
-const newReleases: Album[] = [
-  {
-    title: "Green Skies",
-    artist: "Neon Rivers",
-    score: 81,
-    ratingText: "Generally Favorable",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758610530.jpg",
-  },
-  {
-    title: "Echoes of Dawn",
-    artist: "Horizon Lines",
-    score: 76,
-    ratingText: "Generally Favorable",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758607621.jpg",
-  },
-  {
-    title: "Midnight Parade",
-    artist: "City Lights",
-    score: 69,
-    ratingText: "Mixed or Average",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758610191.jpg",
-  },
-  {
-    title: "Static Bloom",
-    artist: "Violet Echo",
-    score: 85,
-    ratingText: "Universal Acclaim",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758612130.jpg",
-  },
-  {
-    title: "Paper Suns",
-    artist: "Golden Motel",
-    score: 72,
-    ratingText: "Mixed or Average",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758632646.jpg",
-  },
-  {
-    title: "Low Tide High",
-    artist: "Seafoam",
-    score: 64,
-    ratingText: "Mixed or Average",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758814761.jpg",
-  },
-];
-
-const topCriticsPicks: Album[] = [
-  {
-    title: "Northern Lights",
-    artist: "Aurora Fields",
-    score: 88,
-    ratingText: "Universal Acclaim",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758815254.jpg",
-  },
-  {
-    title: "Glass Waves",
-    artist: "Prism Harbor",
-    score: 83,
-    ratingText: "Generally Favorable",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758610444.jpg",
-  },
-  {
-    title: "Monochrome City",
-    artist: "Grey Avenue",
-    score: 78,
-    ratingText: "Generally Favorable",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758633096.jpg",
-  },
-  {
-    title: "Afterimages",
-    artist: "Neon Motif",
-    score: 74,
-    ratingText: "Mixed or Average",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758611295.jpg",
-  },
-  {
-    title: "Polychrome",
-    artist: "Colorwheel",
-    score: 79,
-    ratingText: "Generally Favorable",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758611181.jpg",
-  },
-];
-
-const mostPopular: Album[] = [
-  {
-    title: "Electric Map",
-    artist: "Atlas Drive",
-    score: 71,
-    ratingText: "Mixed or Average",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758608031.jpg",
-  },
-  {
-    title: "Golden Hour",
-    artist: "Sun Motel",
-    score: 82,
-    ratingText: "Generally Favorable",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758609559.jpg",
-  },
-  {
-    title: "City Circuit",
-    artist: "Analog Park",
-    score: 66,
-    ratingText: "Mixed or Average",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758610057.jpg",
-  },
-  {
-    title: "Night Arcade",
-    artist: "Sundown Drive",
-    score: 87,
-    ratingText: "Universal Acclaim",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758814881.jpg",
-  },
-];
-
 const TABS = ["New Releases", "Top Critics' Picks", "Most Popular"];
-
-const albumData: { [key: string]: Album[] } = {
-  "New Releases": newReleases,
-  "Top Critics' Picks": topCriticsPicks,
-  "Most Popular": mostPopular,
-};
 
 const getScoreColor = (score: number) => {
   if (score >= 75) return "bg-score-green";
@@ -183,6 +48,10 @@ export default function MusicSection() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [albums, setAlbums] = useState<Album[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const cacheRef = useRef<Record<string, Album[]>>({});
 
   const handleScroll = useCallback(() => {
     const container = scrollContainerRef.current;
@@ -207,6 +76,51 @@ export default function MusicSection() {
     }
     handleScroll();
   }, [activeTab, handleScroll]);
+
+  // Fetch albums per tab with caching
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setError(null);
+      const cached = cacheRef.current[activeTab];
+      if (cached && cached.length) {
+        setAlbums(cached);
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/music?tab=${encodeURIComponent(activeTab)}`);
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        const data = await res.json();
+        if (!cancelled) {
+          const results = (data.results || []) as Album[];
+          cacheRef.current[activeTab] = results;
+          setAlbums(results);
+        }
+      } catch (e: any) {
+        if (!cancelled) setError(e?.message || 'Failed to load music');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, [activeTab]);
+
+  // Prefetch other tabs
+  useEffect(() => {
+    const otherTabs = TABS.filter(t => t !== activeTab);
+    otherTabs.forEach(async (tab) => {
+      if (cacheRef.current[tab]) return;
+      try {
+        const res = await fetch(`/api/music?tab=${encodeURIComponent(tab)}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        cacheRef.current[tab] = (data.results || []) as Album[];
+      } catch {}
+    });
+  }, [activeTab]);
 
   const scroll = (direction: "left" | "right") => {
     if (scrollContainerRef.current) {
@@ -265,7 +179,19 @@ export default function MusicSection() {
             className="flex space-x-4 overflow-x-auto scroll-smooth pb-2 -mb-2"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {albumData[activeTab]?.map((album, index) => (
+            {loading && !albums.length && (
+              <>
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={`s-${i}`} className="flex-shrink-0 w-[160px] animate-pulse">
+                    <div className="w-[160px] h-[160px] bg-secondary rounded-lg" />
+                    <div className="h-4 bg-secondary rounded mt-2 w-3/4" />
+                    <div className="h-3 bg-secondary rounded mt-2 w-1/2" />
+                  </div>
+                ))}
+              </>
+            )}
+            {error && <div className="py-8 text-sm text-destructive">{error}</div>}
+            {!loading && !error && albums.map((album, index) => (
               <AlbumCard key={`${activeTab}-${index}`} album={album} />
             ))}
           </div>
