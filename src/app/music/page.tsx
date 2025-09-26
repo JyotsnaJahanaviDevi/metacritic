@@ -22,7 +22,7 @@ export default function MusicPage() {
           <NewReleasesByDate />
         </div>
         
-        <LatestNews />
+        {/* <LatestNews /> */}
       </main>
       <Footer />
     </div>
