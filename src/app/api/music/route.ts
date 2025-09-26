@@ -1,3 +1,4 @@
+// route.ts
 import { NextRequest } from "next/server";
 
 // We'll use Apple Music public RSS feeds (no key required) as a simple source.
@@ -64,4 +65,3 @@ export async function GET(req: NextRequest) {
     headers: { "content-type": "application/json" },
   });
 }
-

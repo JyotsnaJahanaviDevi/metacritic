@@ -1,3 +1,5 @@
+// music section
+
 "use client";
 
 import * as React from "react";
@@ -12,143 +14,6 @@ interface Album {
   href: string;
   imageUrl: string;
 }
-
-const newReleases: Album[] = [
-  {
-    title: "Green Skies",
-    artist: "Neon Rivers",
-    score: 81,
-    ratingText: "Generally Favorable",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758610530.jpg",
-  },
-  {
-    title: "Echoes of Dawn",
-    artist: "Horizon Lines",
-    score: 76,
-    ratingText: "Generally Favorable",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758607621.jpg",
-  },
-  {
-    title: "Midnight Parade",
-    artist: "City Lights",
-    score: 69,
-    ratingText: "Mixed or Average",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758610191.jpg",
-  },
-  {
-    title: "Static Bloom",
-    artist: "Violet Echo",
-    score: 85,
-    ratingText: "Universal Acclaim",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758612130.jpg",
-  },
-  {
-    title: "Paper Suns",
-    artist: "Golden Motel",
-    score: 72,
-    ratingText: "Mixed or Average",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758632646.jpg",
-  },
-  {
-    title: "Low Tide High",
-    artist: "Seafoam",
-    score: 64,
-    ratingText: "Mixed or Average",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758814761.jpg",
-  },
-];
-
-const topCriticsPicks: Album[] = [
-  {
-    title: "Northern Lights",
-    artist: "Aurora Fields",
-    score: 88,
-    ratingText: "Universal Acclaim",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758815254.jpg",
-  },
-  {
-    title: "Glass Waves",
-    artist: "Prism Harbor",
-    score: 83,
-    ratingText: "Generally Favorable",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758610444.jpg",
-  },
-  {
-    title: "Monochrome City",
-    artist: "Grey Avenue",
-    score: 78,
-    ratingText: "Generally Favorable",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758633096.jpg",
-  },
-  {
-    title: "Afterimages",
-    artist: "Neon Motif",
-    score: 74,
-    ratingText: "Mixed or Average",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758611295.jpg",
-  },
-  {
-    title: "Polychrome",
-    artist: "Colorwheel",
-    score: 79,
-    ratingText: "Generally Favorable",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758611181.jpg",
-  },
-];
-
-const mostPopular: Album[] = [
-  {
-    title: "Electric Map",
-    artist: "Atlas Drive",
-    score: 71,
-    ratingText: "Mixed or Average",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758608031.jpg",
-  },
-  {
-    title: "Golden Hour",
-    artist: "Sun Motel",
-    score: 82,
-    ratingText: "Generally Favorable",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758609559.jpg",
-  },
-  {
-    title: "City Circuit",
-    artist: "Analog Park",
-    score: 66,
-    ratingText: "Mixed or Average",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758610057.jpg",
-  },
-  {
-    title: "Night Arcade",
-    artist: "Sundown Drive",
-    score: 87,
-    ratingText: "Universal Acclaim",
-    href: "https://www.metacritic.com/music/",
-    imageUrl: "https://www.metacritic.com/a/img/catalog/provider/7/2/7-1758814881.jpg",
-  },
-];
-
-const TABS = ["New Releases", "Top Critics' Picks", "Most Popular"];
-
-const albumData: { [key: string]: Album[] } = {
-  "New Releases": newReleases,
-  "Top Critics' Picks": topCriticsPicks,
-  "Most Popular": mostPopular,
-};
 
 const getScoreColor = (score: number) => {
   if (score >= 75) return "bg-score-green";
@@ -179,10 +44,12 @@ const AlbumCard = ({ album }: { album: Album }) => (
 );
 
 export default function MusicSection() {
-  const [activeTab, setActiveTab] = useState(TABS[0]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [albums, setAlbums] = useState<Album[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleScroll = useCallback(() => {
     const container = scrollContainerRef.current;
@@ -201,35 +68,59 @@ export default function MusicSection() {
     }
   }, [handleScroll]);
 
+  // Re-check scroll state when albums load
   useEffect(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollLeft = 0;
+    if (albums.length > 0) {
+      // Small delay to ensure DOM is updated
+      setTimeout(handleScroll, 100);
     }
-    handleScroll();
-  }, [activeTab, handleScroll]);
+  }, [albums, handleScroll]);
+
+  // Fetch Most Popular albums from API
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setError(null);
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/music?tab=${encodeURIComponent("Most Popular")}`);
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        const data = await res.json();
+        if (!cancelled) {
+          const results = (data.results || []) as Album[];
+          setAlbums(results);
+        }
+      } catch (e: any) {
+        if (!cancelled) setError(e?.message || 'Failed to load music');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
 
   const scroll = (direction: "left" | "right") => {
-    if (scrollContainerRef.current) {
+    const container = scrollContainerRef.current;
+    if (container) {
       const scrollAmount = direction === "left" ? -550 : 550;
-      scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+      container.scrollBy({ left: scrollAmount, behavior: "smooth" });
+      
+      // Update scroll state after scrolling
+      setTimeout(handleScroll, 300);
     }
   };
 
   return (
     <section className="py-8">
       <div className="container px-4">
-        <div className="flex justify-between items-baseline mb-4">
-          <div className="flex items-baseline space-x-4">
-            <h2 className="text-2xl font-bold text-foreground">Top Albums Right Now</h2>
-            <a href="/music/" className="text-xs font-semibold text-muted tracking-wider hover:text-primary">
-              MUSIC HOME
-            </a>
-          </div>
+        <div className="flex justify-between items-baseline mb-6">
+          <h2 className="text-2xl font-bold text-foreground">Most Popular</h2>
           <div className="flex items-center space-x-1">
             <button
               onClick={() => scroll("left")}
               disabled={!canScrollLeft}
-              className="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center shadow-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-secondary transition-colors"
+              className="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center shadow-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-secondary transition-colors z-10"
               aria-label="Scroll left"
             >
               <ChevronLeft className="w-6 h-6 text-foreground" />
@@ -237,36 +128,33 @@ export default function MusicSection() {
             <button
               onClick={() => scroll("right")}
               disabled={!canScrollRight}
-              className="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center shadow-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-secondary transition-colors"
+              className="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center shadow-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-secondary transition-colors z-10"
               aria-label="Scroll right"
             >
               <ChevronRight className="w-6 h-6 text-foreground" />
             </button>
           </div>
         </div>
-        <div className="border-b border-border">
-          <div className="flex space-x-6">
-            {TABS.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`pb-2 text-lg font-semibold transition-colors ${
-                  activeTab === tab ? "text-primary border-b-2 border-primary" : "text-muted-foreground hover:text-primary"
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="relative mt-6">
+        <div className="relative">
           <div
             ref={scrollContainerRef}
             className="flex space-x-4 overflow-x-auto scroll-smooth pb-2 -mb-2"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {albumData[activeTab]?.map((album, index) => (
-              <AlbumCard key={`${activeTab}-${index}`} album={album} />
+            {loading && !albums.length && (
+              <>
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={`s-${i}`} className="flex-shrink-0 w-[160px] animate-pulse">
+                    <div className="w-[160px] h-[160px] bg-secondary rounded-lg" />
+                    <div className="h-4 bg-secondary rounded mt-2 w-3/4" />
+                    <div className="h-3 bg-secondary rounded mt-2 w-1/2" />
+                  </div>
+                ))}
+              </>
+            )}
+            {error && <div className="py-8 text-sm text-destructive">{error}</div>}
+            {!loading && !error && albums.map((album, index) => (
+              <AlbumCard key={`most-popular-${index}`} album={album} />
             ))}
           </div>
         </div>
