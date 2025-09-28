@@ -12,11 +12,12 @@ interface LatestVideosProps {
 type Video = {
   id: number;
   title: string;
-  thumbnail: string;
+  thumbnail?: string; // optional, can auto-fetch from YouTube
   duration: string;
   type: 'movie' | 'game' | 'tv show';
   metascore?: 'tbd';
   metascoreInfo?: string;
+  youtubeUrl?: string; // new field
 };
 
 // Check your video data - make sure movie videos have type: "movie"

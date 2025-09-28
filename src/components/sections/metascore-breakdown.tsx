@@ -17,19 +17,20 @@ const ScoreBox: React.FC<ScoreBoxProps> = ({ score, position, size }) => (
 
 const MetascoreBreakdown: React.FC = () => {
   const scoresData = [
-    { score: 99, position: 'top-8 right-1/2 translate-x-1/2 lg:right-[45%]', size: 'w-24 h-24' },
-    { score: 95, position: 'top-1/3 left-1/2 -translate-x-3/4 lg:left-[40%]', size: 'w-28 h-28' },
-    { score: 88, position: 'top-1/2 right-[30%] -translate-y-1/2 rotate-[-12deg]', size: 'w-24 h-24' },
-    { score: 89, position: 'bottom-1/4 right-1/2 lg:right-[45%]', size: 'w-20 h-20' },
-    { score: 82, position: 'bottom-8 right-8 lg:right-16', size: 'w-32 h-32' },
-    { score: 91, position: 'bottom-8 left-8 lg:left-16', size: 'w-28 h-28' },
-    { score: 57, position: 'top-16 left-1/2 -translate-x-full lg:left-32 -rotate-12', size: 'w-20 h-20' },
-    { score: 48, position: 'top-1/3 left-8 lg:left-16', size: 'w-24 h-24' },
-    { score: 72, position: 'bottom-1/3 left-1/3 rotate-12', size: 'w-16 h-16' },
-    { score: 23, position: 'top-8 left-8', size: 'w-16 h-16' },
-    { score: 12, position: 'top-1/2 left-8 -translate-y-1/2', size: 'w-20 h-20' },
-    { score: 8, position: 'bottom-1/2 right-12 -translate-y-1/2', size: 'w-20 h-20' },
-  ];
+  { score: 99, position: 'top-8 right-1/2 translate-x-1/2 lg:right-[45%]', size: 'w-24 h-24' },
+  { score: 95, position: 'top-2/3 left-1/2 -translate-x-1/4 lg:left-[35%]', size: 'w-28 h-28' }, // moved up & left
+  { score: 88, position: 'top-1/2 right-[30%] -translate-y-1/2 rotate-[-12deg]', size: 'w-24 h-24' },
+  { score: 89, position: 'bottom-1/4 right-1/2 lg:right-[45%]', size: 'w-20 h-20' },
+  { score: 82, position: 'bottom-8 right-20 lg:right-16', size: 'w-32 h-32' },
+  { score: 91, position: 'bottom-8 left-8 lg:left-16', size: 'w-28 h-28' },
+  { score: 57, position: 'top-8 left-1/2 -translate-x-full lg:right-32 -rotate-12', size: 'w-20 h-20' },
+  { score: 48, position: 'top-1/4 right-4 lg:right-16', size: 'w-24 h-24' }, // moved down a bit
+  { score: 72, position: 'top-1/5 left-1/3 rotate-12', size: 'w-16 h-16' }, // moved down a bit
+  { score: 23, position: 'top-8 left-8', size: 'w-16 h-16' },
+  { score: 12, position: 'top-1/4 left-1/6 -translate-y-1/2', size: 'w-20 h-20' },
+  { score: 8, position: 'bottom-1/2 right-12 -translate-y-1/2', size: 'w-20 h-20' },
+];
+
 
   return (
     <section className="relative my-8 overflow-hidden bg-gradient-to-r from-score-green via-score-orange to-score-red rounded-lg">

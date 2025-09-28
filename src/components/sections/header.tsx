@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Search, Menu, X } from 'lucide-react';
+import Image from "next/image";
+
 
 const navItems = [
     { name: 'Games', href: '/game' },
@@ -13,13 +15,20 @@ const navItems = [
 ];
 
 const MetacriticLogo = () => (
-    <Link href="/" className="flex items-center gap-2">
-        <div className="w-9 h-9 bg-chart-2 rounded-full flex items-center justify-center flex-shrink-0">
-            <span className="text-primary font-bold text-xl leading-none">m</span>
-        </div>
-        <span className="text-primary-foreground text-[28px] font-bold tracking-tighter lowercase">metacritic</span>
-    </Link>
+  <Link href="/" className="flex items-center gap-2">
+    <Image
+      src="/logo.png"   // path in public folder
+      alt="Metacritic Logo"
+      width={250}       // adjust as needed
+      height={100}      // adjust as needed
+      className="object-contain"
+    />
+    {/* <span className="text-primary-foreground text-[28px] font-bold tracking-tighter lowercase">
+      watchtube
+    </span> */}
+  </Link>
 );
+
 
 
 export default function Header() {

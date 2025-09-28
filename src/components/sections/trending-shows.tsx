@@ -157,8 +157,7 @@ const TrendingShows = () => {
           </div>
         </div>
         <div className="flex justify-end items-center mt-2 text-xs text-muted-foreground pr-4">
-          <span>Powered by</span>
-          <JustWatchLogo />
+          
         </div>
       </section>
     </>

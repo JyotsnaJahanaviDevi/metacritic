@@ -148,8 +148,8 @@ const TrendingMoviesSection = () => {
                 </div>
 
                 <div className="flex justify-end items-center mt-4 pt-4">
-                    <span className="text-xs text-text-muted mr-2">Powered by</span>
-                    <JustWatchLogo />
+                    {/* <span className="text-xs text-text-muted mr-2">Powered by</span>
+                    <JustWatchLogo /> */}
                 </div>
             </div>
         </section>
