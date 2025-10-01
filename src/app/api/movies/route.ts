@@ -54,6 +54,7 @@ export async function GET(req: NextRequest) {
     const poster = m.poster_path ? `https://image.tmdb.org/t/p/w342${m.poster_path}` : "";
     const backdrop = m.backdrop_path ? `https://image.tmdb.org/t/p/w342${m.backdrop_path}` : "";
     return {
+      id: m.id,
       title: m.title || m.name,
       score: Math.round(((m.vote_average || 0) as number) * 10), // TMDb 0-10 → 0-100 style
       ratingText: m.vote_count > 500 ? (m.vote_average >= 7.5 ? "Universal Acclaim" : m.vote_average >= 5 ? "Generally Favorable" : "Mixed or Average") : "",
@@ -66,5 +67,4 @@ export async function GET(req: NextRequest) {
     headers: { "content-type": "application/json" },
   });
 }
-
 

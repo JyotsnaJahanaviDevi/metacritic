@@ -2,9 +2,11 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 type Movie = {
+  id: number;
   title: string;
   score: number;
   ratingText: string;
@@ -19,28 +21,30 @@ const getScoreColor = (score: number) => {
   return 'bg-score-red';
 };
 
-const MovieCard = ({ movie }: { movie: Movie }) => (
-  <div className="flex-shrink-0 w-[150px]">
-    <a href={movie.link} className="group block">
-      <div className="w-full aspect-[2/3] rounded-md overflow-hidden bg-muted">
-        <Image
-          src={movie.imageUrl}
-          alt={movie.title}
-          width={150}
-          height={225}
-          className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
-        />
+const MovieCard = ({ movie }: { movie: Movie }) => {
+  return (
+    <div className="flex-shrink-0 w-[150px]">
+      <Link href={`/movies/${movie.id}`} className="group block">
+        <div className="w-full aspect-[2/3] rounded-md overflow-hidden bg-muted">
+          <Image
+            src={movie.imageUrl}
+            alt={movie.title}
+            width={150}
+            height={225}
+            className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
+          />
+        </div>
+        <h3 className="font-bold text-sm text-foreground truncate mt-2">{movie.title}</h3>
+      </Link>
+      <div className="flex items-center mt-1 gap-2">
+        <div className={`w-8 h-8 flex items-center justify-center rounded font-bold text-lg text-white ${getScoreColor(movie.score)}`}>
+          {movie.score}
+        </div>
+        <p className="text-xs text-muted-foreground">{movie.ratingText}</p>
       </div>
-      <h3 className="font-bold text-sm text-foreground truncate mt-2">{movie.title}</h3>
-    </a>
-    <div className="flex items-center mt-1 gap-2">
-      <div className={`w-8 h-8 flex items-center justify-center rounded font-bold text-lg text-white ${getScoreColor(movie.score)}`}>
-        {movie.score}
-      </div>
-      <p className="text-xs text-muted-foreground">{movie.ratingText}</p>
     </div>
-  </div>
-);
+  );
+};
 
 export default function MoviesSection() {
   const [activeTab, setActiveTab] = useState(TABS[0]);

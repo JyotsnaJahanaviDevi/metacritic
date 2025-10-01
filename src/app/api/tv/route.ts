@@ -46,6 +46,7 @@ export async function GET(req: NextRequest) {
   const data = await res.json();
 
   const results = (data.results || []).map((s: any) => ({
+    id: s.id,
     title: s.name || s.original_name,
     score: Math.round(((s.vote_average || 0) as number) * 10),
     scoreText: s.vote_count > 200 ? (s.vote_average >= 7.5 ? "Universal Acclaim" : s.vote_average >= 5 ? "Generally Favorable" : "Mixed or Average") : "",

@@ -65,6 +65,7 @@ export async function GET(req: NextRequest) {
   const data = await res.json();
 
   const results = (data.results || []).map((g: any) => ({
+    id: g.id,
     title: g.name,
     score: Math.round(((g.rating || 0) as number) * 20), // RAWG 0-5 → 0-100
     ratingText: g.ratings_count > 200 ? (g.rating >= 3.75 ? "Universal Acclaim" : g.rating >= 2.5 ? "Generally Favorable" : "Mixed or Average") : "",

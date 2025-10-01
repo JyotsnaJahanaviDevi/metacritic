@@ -4,9 +4,11 @@
 
 import * as React from "react";
 import { useState, useRef, useEffect, useCallback } from "react";
+import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Album {
+  id: string;
   title: string;
   artist: string;
   score: number;
@@ -21,27 +23,29 @@ const getScoreColor = (score: number) => {
   return "bg-score-red";
 };
 
-const AlbumCard = ({ album }: { album: Album }) => (
-  <a href={album.href} className="w-[160px] flex-shrink-0 group">
-    <div className="w-[160px] h-[160px] rounded-lg overflow-hidden mb-2.5">
-      <img
-        src={album.imageUrl}
-        alt={`${album.title} cover`}
-        width={160}
-        height={160}
-        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-      />
-    </div>
-    <h3 className="text-sm font-bold text-foreground truncate group-hover:text-primary">{album.title}</h3>
-    <p className="text-xs text-text-secondary truncate mb-1.5">{album.artist}</p>
-    <div className="flex items-center space-x-2">
-      <div className={`w-10 h-10 flex items-center justify-center rounded text-white font-bold text-lg ${getScoreColor(album.score)}`}>
-        {album.score}
+const AlbumCard = ({ album }: { album: Album }) => {
+  return (
+    <Link href={`/music/${album.id}`} className="w-[160px] flex-shrink-0 group">
+      <div className="w-[160px] h-[160px] rounded-lg overflow-hidden mb-2.5">
+        <img
+          src={album.imageUrl}
+          alt={`${album.title} cover`}
+          width={160}
+          height={160}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+        />
       </div>
-      <span className="text-xs text-text-secondary flex-1">{album.ratingText}</span>
-    </div>
-  </a>
-);
+      <h3 className="text-sm font-bold text-foreground truncate group-hover:text-primary">{album.title}</h3>
+      <p className="text-xs text-text-secondary truncate mb-1.5">{album.artist}</p>
+      <div className="flex items-center space-x-2">
+        <div className={`w-10 h-10 flex items-center justify-center rounded text-white font-bold text-lg ${getScoreColor(album.score)}`}>
+          {album.score}
+        </div>
+        <span className="text-xs text-text-secondary flex-1">{album.ratingText}</span>
+      </div>
+    </Link>
+  );
+};
 
 export default function MusicSection() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);

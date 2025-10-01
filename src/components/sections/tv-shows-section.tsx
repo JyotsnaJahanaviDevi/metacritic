@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useRef, FC, useEffect } from "react";
+import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface TvShow {
+  id: number;
   title: string;
   score: number;
   scoreText: string;
@@ -20,32 +22,34 @@ const getScoreColor = (score: number) => {
   return "bg-score-red";
 };
 
-const TvShowCard: FC<{ show: TvShow }> = ({ show }) => (
-  <a href={show.href} className="flex-shrink-0 w-[150px] group">
-    <div className="aspect-[2/3] w-full bg-secondary rounded-lg overflow-hidden">
-      <img
-        src={show.imageUrl}
-        alt={show.title}
-        className="w-full h-full object-cover"
-        width={150}
-        height={225}
-      />
-    </div>
-    <h3 className="mt-2 text-sm font-bold text-foreground truncate group-hover:underline">
-      {show.title}
-    </h3>
-    <div className="flex items-center mt-1">
-      <div
-        className={`w-6 h-6 flex items-center justify-center rounded-sm text-white font-bold text-base mr-2 ${getScoreColor(
-          show.score,
-        )}`}
-      >
-        {show.score}
+const TvShowCard: FC<{ show: TvShow }> = ({ show }) => {
+  return (
+    <Link href={`/tv/${show.id}`} className="flex-shrink-0 w-[150px] group">
+      <div className="aspect-[2/3] w-full bg-secondary rounded-lg overflow-hidden">
+        <img
+          src={show.imageUrl}
+          alt={show.title}
+          className="w-full h-full object-cover"
+          width={150}
+          height={225}
+        />
       </div>
-      <span className="text-sm text-muted-foreground">{show.scoreText}</span>
-    </div>
-  </a>
-);
+      <h3 className="mt-2 text-sm font-bold text-foreground truncate group-hover:underline">
+        {show.title}
+      </h3>
+      <div className="flex items-center mt-1">
+        <div
+          className={`w-6 h-6 flex items-center justify-center rounded-sm text-white font-bold text-base mr-2 ${getScoreColor(
+            show.score,
+          )}`}
+        >
+          {show.score}
+        </div>
+        <span className="text-sm text-muted-foreground">{show.scoreText}</span>
+      </div>
+    </Link>
+  );
+};
 
 const TvShowsSection = () => {
   const [activeTab, setActiveTab] = useState("New Releases");

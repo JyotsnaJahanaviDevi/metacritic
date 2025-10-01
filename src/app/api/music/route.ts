@@ -51,15 +51,21 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  const results = (data.feed?.results || []).map((item: any) => ({
-    title: item.name,
-    artist: item.artistName,
-    // Apple RSS has no critic score; synthesize placeholder 0 and text empty
-    score: 0,
-    ratingText: "",
-    href: item.url,
-    imageUrl: item.artworkUrl100?.replace("100x100bb", "200x200bb") || item.artworkUrl100 || "",
-  }));
+  const results = (data.feed?.results || []).map((item: any, index: number) => {
+    // Generate a mock score based on chart position
+    const mockScore = Math.max(60, 95 - (index * 2));
+    const ratingText = mockScore >= 75 ? "Universal Acclaim" : mockScore >= 60 ? "Generally Favorable" : "Mixed or Average";
+    
+    return {
+      id: item.id || `apple-${index}`,
+      title: item.name,
+      artist: item.artistName,
+      score: mockScore,
+      ratingText,
+      href: item.url,
+      imageUrl: item.artworkUrl100?.replace("100x100bb", "200x200bb") || item.artworkUrl100 || "",
+    };
+  });
 
   return new Response(JSON.stringify({ results }), {
     headers: { "content-type": "application/json" },

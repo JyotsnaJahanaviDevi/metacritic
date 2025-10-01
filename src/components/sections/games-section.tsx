@@ -2,9 +2,11 @@
 
 import * as React from "react";
 import { useState, useRef, useEffect, useCallback } from "react";
+import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Game {
+  id: number;
   title: string;
   score: number;
   ratingText: string;
@@ -169,26 +171,28 @@ const getScoreColor = (score: number) => {
   return "bg-score-red";
 };
 
-const GameCard = ({ game }: { game: Game }) => (
-  <a href={game.href} className="w-[160px] flex-shrink-0 group">
-    <div className="w-[160px] h-[213px] rounded-lg overflow-hidden mb-2.5">
-      <img
-        src={game.imageUrl}
-        alt={game.title}
-        width={160}
-        height={213}
-        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-      />
-    </div>
-    <h3 className="text-sm font-bold text-foreground truncate mb-1.5 group-hover:text-primary">{game.title}</h3>
-    <div className="flex items-center space-x-2">
-      <div className={`w-10 h-10 flex items-center justify-center rounded text-white font-bold text-lg ${getScoreColor(game.score)}`}>
-        {game.score}
+const GameCard = ({ game }: { game: Game }) => {
+  return (
+    <Link href={`/games/${game.id}`} className="w-[160px] flex-shrink-0 group">
+      <div className="w-[160px] h-[213px] rounded-lg overflow-hidden mb-2.5">
+        <img
+          src={game.imageUrl}
+          alt={game.title}
+          width={160}
+          height={213}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+        />
       </div>
-      <span className="text-xs text-text-secondary flex-1">{game.ratingText}</span>
-    </div>
-  </a>
-);
+      <h3 className="text-sm font-bold text-foreground truncate mb-1.5 group-hover:text-primary">{game.title}</h3>
+      <div className="flex items-center space-x-2">
+        <div className={`w-10 h-10 flex items-center justify-center rounded text-white font-bold text-lg ${getScoreColor(game.score)}`}>
+          {game.score}
+        </div>
+        <span className="text-xs text-text-secondary flex-1">{game.ratingText}</span>
+      </div>
+    </Link>
+  );
+};
 
 export default function GamesSection() {
   const [activeTab, setActiveTab] = useState(TABS[0]);
